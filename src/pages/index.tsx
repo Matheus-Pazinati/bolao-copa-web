@@ -1,6 +1,3 @@
-// interface HomeProps {
-//   count: number
-// }
 import Image from 'next/image'
 
 import logoImg from '../assets/logo.svg'
@@ -8,9 +5,18 @@ import userAvatarImg from '../assets/users-avatar-example.png'
 import checkIconImg from '../assets/check-icon.svg'
 import appBannerPreviewImg from '../assets/app-preview-mobile-banner.png'
 
+import { api } from '../lib/axios'
 
 
-export default function Home() {
+interface HomeProps {
+  poolsCount: number
+  usersCount: number
+  guessesCount: number
+}
+
+
+
+export default function Home({poolsCount, usersCount, guessesCount}: HomeProps) {
   return (
     <div className='max-w-[1124px] h-screen grid grid-cols-2 items-center mx-auto gap-28'>
       <main>
@@ -20,7 +26,7 @@ export default function Home() {
           <div className='flex items-center gap-2'>
             <Image src={userAvatarImg} alt="" />
             <strong className='font-bold text-xl text-[#E1E1E6]'>
-             <span className='text-[#129E57]'>+12.592</span> pessoas já estão usando
+             <span className='text-[#129E57]'>+{usersCount}</span> pessoas já estão usando
             </strong>
           </div>
         </div>
@@ -43,7 +49,7 @@ export default function Home() {
           <div className='flex items-center gap-6'>
             <Image src={checkIconImg} alt="" />
             <div className='flex flex-col'>
-              <span className='text-[#E1E1E6] font-bold text-2xl'>+2034</span>
+              <span className='text-[#E1E1E6] font-bold text-2xl'>+{poolsCount}</span>
               <span className='text-[#E1E1E6] text-base'>Bolões criados</span>
             </div>
           </div>
@@ -51,7 +57,7 @@ export default function Home() {
           <div className='flex items-center gap-6'>
             <Image src={checkIconImg} alt="" />
             <div className='flex flex-col'>
-              <span className='text-[#E1E1E6] font-bold text-2xl'>+10000</span>
+              <span className='text-[#E1E1E6] font-bold text-2xl'>+{guessesCount}</span>
               <span className='text-[#E1E1E6] text-base'>Palpites enviados</span>
             </div>
           </div>
@@ -62,13 +68,19 @@ export default function Home() {
   )
 }
 
-// export const getServerSideProps = async () => {
-//   const request = await fetch('http://localhost:3333/pools/count')
-//   const data = await request.json()
+export const getServerSideProps = async () => {
 
-//   return {
-//     props: {
-//       count: data.count
-//     }
-//   }
-// }
+  const [poolsCount, usersCount, guessesCount] = await Promise.all([
+    api.get('/pools/count'),
+    api.get('/users/count'),
+    api.get('/guesses/count')
+  ])
+
+  return {
+    props: {
+      poolsCount: poolsCount.data.count,
+      usersCount: usersCount.data.count,
+      guessesCount: guessesCount.data.count
+    }
+  }
+}
