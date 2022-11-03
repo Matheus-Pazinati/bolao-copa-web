@@ -6,7 +6,7 @@ import checkIconImg from '../assets/check-icon.svg'
 import appBannerPreviewImg from '../assets/app-preview-mobile-banner.png'
 
 import { api } from '../lib/axios'
-
+import { FormEvent, useState } from 'react'
 
 interface HomeProps {
   poolsCount: number
@@ -14,9 +14,26 @@ interface HomeProps {
   guessesCount: number
 }
 
-
-
 export default function Home({poolsCount, usersCount, guessesCount}: HomeProps) {
+
+  const [pollTitle, setPollTitle] = useState('')
+
+  const pollTitleFilled = pollTitle.length > 0
+
+  async function handleCreatePoll(event: FormEvent) {
+    event.preventDefault()
+
+    try {
+      await api.post('/pools', {
+        title: pollTitle
+      })
+    } catch (error) {
+      console.log(error)
+    }
+
+    setPollTitle('')
+  }
+
   return (
     <div className='max-w-[1124px] h-screen grid grid-cols-2 items-center mx-auto gap-28'>
       <main>
@@ -30,16 +47,19 @@ export default function Home({poolsCount, usersCount, guessesCount}: HomeProps) 
             </strong>
           </div>
         </div>
-        <form className='mt-10 mb-4 flex items-center gap-2'>
+        <form onSubmit={handleCreatePoll} className='mt-10 mb-4 flex items-center gap-2'>
           <input 
             type="text" 
             required 
             placeholder='Qual nome do seu bolão?'
-            className='flex-1 px-6 py-4 text-sm text-[#C4C4CC] rounded border border-x-[1px] border-[#323238] bg-[#202024] focus:outline-[#F7DD43]' 
+            className='flex-1 px-6 py-4 text-sm text-[#C4C4CC] rounded border border-x-[1px] border-[#323238] bg-[#202024] focus:outline-[#F7DD43]'
+            onChange={(e) => setPollTitle(e.target.value)} 
+            value={pollTitle}
           />
           <button 
             type="submit"
-            className='px-6 py-4 rounded text-sm text-[#09090A] bg-[#F7DD43] font-bold uppercase hover:bg-[#E1C623]'
+            disabled={!pollTitleFilled}
+            className='px-6 py-4 rounded text-sm text-[#09090A] bg-[#F7DD43] font-bold uppercase enabled:hover:bg-[#E1C623] disabled:cursor-not-allowed '
             >
             Criar meu bolão
           </button>
@@ -69,7 +89,6 @@ export default function Home({poolsCount, usersCount, guessesCount}: HomeProps) 
 }
 
 export const getServerSideProps = async () => {
-
   const [poolsCount, usersCount, guessesCount] = await Promise.all([
     api.get('/pools/count'),
     api.get('/users/count'),
