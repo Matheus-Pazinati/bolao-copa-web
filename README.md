@@ -21,7 +21,7 @@
 <h2>📌 Funcionalidades a serem implementadas</h2>
 <ul>
   <li>Aplicar o conceito de Static Site Generator, para reduzir o número de requisições feitas ao back-end para receber os dados do número de bolões, número de palpites e número de usuários, e consequentemente, melhorar a performance da aplicação.</li>
-  <li>Criar um componente de Alerta para exibir o código do bolão após ele ser criado.</li>
+  <li>Criar um componente de Alerta para exibir o código do bolão após ele ser criado. - Ok ✔️</li>
 </ul>
 <br>
 <h2>🔖 Layout</h2>
