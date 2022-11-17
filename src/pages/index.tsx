@@ -1,3 +1,5 @@
+import { FormEvent, useState } from 'react'
+
 import Image from 'next/image'
 
 import logoImg from '../assets/logo.svg'
@@ -6,7 +8,8 @@ import checkIconImg from '../assets/check-icon.svg'
 import appBannerPreviewImg from '../assets/app-preview-mobile-banner.png'
 
 import { api } from '../lib/axios'
-import { FormEvent, useState } from 'react'
+
+import Swal from 'sweetalert2'
 
 interface HomeProps {
   poolsCount: number
@@ -26,6 +29,13 @@ export default function Home({poolsCount, usersCount, guessesCount}: HomeProps) 
     try {
       await api.post('/pools', {
         title: pollTitle
+      })
+      .then((response) => {
+        Swal.fire({
+          title: 'Bolão criado com sucesso!',
+          text: `Código do bolão: ${response.data.code}. Compartilhe com a galera!`,
+          icon: 'success'
+        })
       })
     } catch (error) {
       console.log(error)
